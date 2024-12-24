@@ -1,18 +1,17 @@
-// src/config/db.js
-
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
-dotenv.config();
+export const connectToDatabase = async () => {
+  const mongoUri = process.env.LOCAL_MONGO_URI;
 
-const connect = async () => {
+  if (!mongoUri) {
+    throw new Error('MONGO_URI is not defined in environment variables');
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.LOCAL_MONGO_URI);
-    console.log(`MongoDB connected: ${conn.connection.name}`);
-  } catch (error) {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
-    process.exit(1); // Exit process with failure
+    await mongoose.connect(mongoUri);
+    console.log('✅ MongoDB connection successful');
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err.message);
+    throw err;
   }
 };
-
-export default { connect };
